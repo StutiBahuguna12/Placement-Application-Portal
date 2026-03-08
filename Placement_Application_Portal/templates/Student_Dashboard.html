@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Placement'seasy</title>
+</head>
+<body>
+     <section>
+        <div class="header">
+          <h1>Admin Dashboard</h1>
+          <p>Welcome, {{ admin.username }}!</p> 
+        </div>
+         
+        <div>
+            <button>edit profile</button>
+            <button>History</button>
+            <button onclick="window.location.href='/logout/'">logout</button>
+        </div>
+    </section>
+  <section>
+    <h1>Organizations</h1>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; padding: 20px;">
+      {% for company in companies %}
+      <div style="border: 1px solid #ddd; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); cursor: pointer;">
+        <h3>{{ company.name }}</h3>
+        <p><strong>Industry:</strong> {{ company.industry }}</p>
+        <p><strong>Location:</strong> {{ company.location }}</p>
+        <p>{{ company.description }}</p>
+        <button onclick="window.location.href='/company/{{ company.id }}/'">View Details</button>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+       
+</body>
+</html>

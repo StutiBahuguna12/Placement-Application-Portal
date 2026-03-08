@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        table th {
+            background-color: #f2f2f2;
+        }
+        button {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+        select {
+            padding: 6px;
+            cursor: pointer;
+        }
+    </style>
+    <script>
+        function openModal(id) {
+            document.getElementById(id).style.display = "block";
+        }
+        function closeModal(id) {
+            document.getElementById(id).style.display = "none";
+        }
+        function updateStatus(id, status) {
+            console.log("Update status for " + id + " to " + status);
+        }
+        function markAsComplete(driveId) {
+            console.log("Mark drive " + driveId + " as complete");
+        }
+    </script>
+</head>
+<body>
+    <section>
+        <div class="header">
+          <h1>Admin Dashboard</h1>
+          <p>Welcome, {{ admin.username }}!</p> 
+        </div>
+         
+        <div class="search">
+            <input type="text" placeholder="Search...">
+            <button type="submit">Search</button>
+            <button onclick="window.location.href='/logout/'">logout</button>
+        </div>
+    </section>
+    <section>
+           <nav>
+               <ul>
+                <li><a href="">Companies</a></li>
+                <li><a href="">Students</a></li>
+                <li><a href="/admin/students">Applications</a></li>
+                <li><a href="/admin/placement-drives"> Drives</a></li>
+               </ul>
+             </nav>
+    </section>
+    <section>
+        <h1>Registered Companies</h1>
+        <div>
+            <table>
+                <tbody>
+                    {% for company in companies %}
+                    <tr>
+                        <td>{{ company.name }}</td>
+                        <td> <select onchange="updateStatus('{{ company.id }}', this.value)">
+                                <option value="approved" {% if company.approval_status == 'approved' %}selected{% endif %}>Approved</option>
+                                <option value="rejected" {% if company.approval_status == 'rejected' %}selected{% endif %}>Rejected</option>
+                                <option value="blacklisted" {% if company.approval_status == 'blacklisted' %}selected{% endif %}>Blacklisted</option>
+                            </select>{{ company.approval_status }}</td>
+                        
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table> 
+        </div>
+    </section>
+     <section>
+        <h1>Registered Students</h1>
+        <div>
+            <table>
+                <tbody>
+                    {% for student in students %}
+                    <tr>
+                        <td>{{ student.name }}</td>
+                        <td> <select onchange="updateStatus('{{ student.id }}', this.value)">
+                                <option value="approved" {% if student.approval_status == 'approved' %}selected{% endif %}>Approved</option>
+                                <option value="rejected" {% if student.approval_status == 'rejected' %}selected{% endif %}>Rejected</option>
+                                <option value="blacklisted" {% if student.approval_status == 'blacklisted' %}selected{% endif %}>Blacklisted</option>
+                            </select>{{ student.approval_status }}</td>
+                        
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table> 
+        </div>
+    </section>
+     <section>
+        <h1> Companies Applications</h1>
+        <div>
+            <table>
+                <tbody>
+                    {% for company in companies %}
+                        {% if company.approval_status == 'pending' %}
+                    <tr>
+                        <td>{{ company.name }}</td>
+                        <td> <select onchange="updateStatus('{{ company.id }}', this.value)">
+                                <option value="approved" {% if company.approval_status == 'approved' %}selected{% endif %}>Approved</option>
+                                <option value="rejected" {% if company.approval_status == 'rejected' %}selected{% endif %}>Rejected</option>
+                                <option value="blacklisted" {% if company.approval_status == 'blacklisted' %}selected{% endif %}>Blacklisted</option>
+                            </select>{{ company.approval_status }}</td>
+                        
+                    </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table> 
+        </div>
+    </section>
+     <section>
+        <h1>Ongoing Drives</h1>
+        <div>
+            <table>
+                <tbody>
+                    {% for placement_drive in placement_drives %}
+                    <tr>
+                        <td>{{ placement_drive.drive_id }}</td>
+                        <td>{{ placement_drive.name }}</td>
+                        <td> 
+                            <div>
+                                <button onclick="openModal('modal-{{ placement_drive.drive_id }}')" class="btn btn-primary">View Details</button>
+                                <button onclick="markAsComplete('{{ placement_drive.drive_id }}')" {% if placement_drive.status =='closed' %}disabled{% endif %}>
+                                    {% if placement_drive.status == 'closed' %}Completed{% else %}Mark as Complete{% endif %}
+                                </button>
+                            </div>
+                         </td>
+                        
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table> 
+            {% for placement_drive in placement_drives %}
+        <div id="modal-{{ placement_drive.drive_id }}" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000;">
+            <div style="background:white; margin:10% auto; padding:20px; width:80%; max-width:600px; border-radius:8px;">
+            <span onclick="closeModal('modal-{{ placement_drive.drive_id }}')" style="float:right; cursor:pointer; font-size:24px;">&times;</span>
+            <h4>Job Title:</h4> <p>{{ placement_drive.job_title }}</p>
+            <h4>Job Description:</h4> <p>{{ placement_drive.job_description }}</p>
+            <h4>Department:</h4> <p>{{ placement_drive.department }}</p>
+            <h4>Company Name:</h4> <p>{{ placement_drive.company.name }}</p>
+             <h4>Salary:</h4> <p>{{ placement_drive.salary }}</p>
+             <h4>Location:</h4> <p>{{ placement_drive.location }}</p>
+            <button onclick="closeModal('modal-{{ placement_drive.drive_id }}')">Close</button>
+            </div>
+        </div>
+        {% endfor %}
+        </div>
+    </section>
+     <section>
+        <h1>Students Applications</h1>
+        <div>
+            <table>
+            <thead>
+                <tr>
+                <th>Sr.no.</th>
+                <th>Student Name</th>
+                <th>Company Name</th>
+                <th>Drive</th>
+                <th>Date</th>
+                <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for application in applications %}
+                <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ application.student.name }}</td>
+                <td>{{ application.company.name }}</td>
+                <td>{{ application.placement_drive.name }}</td>
+                <td>{{ application.date }}</td>
+                <td><button onclick="openModal('modal-{{ loop.index }}')" class="btn btn-primary">View Details</button></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            </table> 
+        </div>
+
+        {% for application in applications %}
+        <div id="modal-{{ loop.index }}" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000;">
+            <div style="background:white; margin:10% auto; padding:20px; width:80%; max-width:600px; border-radius:8px;">
+            <span onclick="closeModal('modal-{{ loop.index }}')" style="float:right; cursor:pointer; font-size:24px;">&times;</span>
+            <h4>Student Name:</h4> <p>{{ application.student.name }}</p>
+            <h4>Student Email:</h4> <p>{{ application.student.email }}</p>
+            <h4>Department:</h4> <p>{{ application.student.department }}</p>
+            <h4>Company Name:</h4> <p>{{ application.company.name }}</p>
+            <h4>Job Title:</h4> <p>{{ application.company.job_title }}</p>
+            <h4>Drive Name:</h4> <p>{{ application.placement_drive.name }}</p>
+            <h4>Application Date:</h4> <p>{{ application.date }}</p>
+            <button>View Resume</button>
+            <button onclick="closeModal('modal-{{ loop.index }}')">Close</button>
+            </div>
+        </div>
+
+        <script>
+            function openModal(id) {
+            document.getElementById(id).style.display = "block";
+            }
+            function closeModal(id) {
+            document.getElementById(id).style.display = "none";
+            }
+        </script>
+    </section>
+ 
+</body>
+<script>
+    
+
+</script>
+</html>

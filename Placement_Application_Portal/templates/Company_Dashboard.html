@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <section>
+        <div><h1>Company Dashboard</h1>
+        <h3>Welcome, {{ company.name }}!</h3></div>
+        <div>
+            <button onclick="window.location.href='/logout/'">Logout</button>
+        </div>
+    </section>
+    <section>
+        <div>
+            <h1>Upcoming Drives</h1>
+            <button onclick="openModal('createModal')" class="btn btn-primary">Create Drive</button>
+        </div>
+        <div>
+            <table>
+                <tr>
+                    <th>Drive ID</th>
+                    <th>Drive Name</th>
+                    <th>Actions</th>
+                </tr>
+                <tbody>
+                    {% for placement_drive in placement_drives %}
+                    <tr>
+                        <td>{{ placement_drive.drive_id }}</td>
+                        <td>{{ placement_drive.name }}</td>
+                        <td> 
+                            <button onclick="location.href='Update_Applications.html'" class="btn btn-primary">View Details</button>
+                            <button onclick="markAsComplete('{{ placement_drive.drive_id }}')" {% if placement_drive.status =='closed' %}disabled{% endif %}>
+                                {% if placement_drive.status == 'closed' %}Completed{% else %}Mark as Complete{% endif %}
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table> 
+        </div>
+    </section>
+
+    <div id="createModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000;">
+        <div style="background:white; margin:10% auto; padding:20px; width:80%; max-width:600px; border-radius:8px;">
+            <span onclick="closeModal('createModal')" style="float:right; cursor:pointer; font-size:24px;">&times;</span>
+            <h4>Create New Drive</h4>
+            <form>
+                <input type="text" id="driveName" placeholder="Drive Name" required>
+                <button type="button" onclick="saveDrive()">Save Drive</button>
+            </form>
+        </div>
+    </div>
+    <section>
+        <h1>Closed Drives</h1>
+        <div>
+            <table>
+                <tbody>
+                    {% for placement_drive in placement_drives %}
+                        {% if placement_drive.status == 'closed' %}
+                    <tr>
+                        <td>{{ placement_drive.drive_id }}</td>
+                        <td>{{ placement_drive.name }}</td>
+                        <td> 
+                            <button onclick="location.href='Update_Applications.html'" class="btn btn-primary">View Details</button>
+                         </td>
+                    </tr>
+    </section>
+ <script>
+            function openModal(id) {
+            document.getElementById(id).style.display = "block";
+            }
+            function closeModal(id) {
+            document.getElementById(id).style.display = "none";
+            }
+        </script>
+</html>

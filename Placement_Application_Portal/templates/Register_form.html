@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+     <section>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; padding: 20px;">
+      <div style="border: 1px solid #ddd; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); cursor: pointer;">
+        <h1>Register Form</h1>
+        <form method="post" action="/login/">
+            {% csrf_token %}
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <select name="role" required>
+                <option value="">Select Role</option>
+                <option value="student">Student</option>
+                <option value="company">Company</option>
+            </select>
+            <button type="submit">Register</button>
+        </form>
+        <p>Already have an account? <a href="/index/">Login here</a>.</p>
+
+    </div>
+   </section>
+</body>
+</html>
